@@ -1,5 +1,5 @@
 # android-pick-devices
-___
+
 ### 使用步骤
 * 查看你的pc上连接的手机串号
 
