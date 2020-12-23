@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">设备分拣仪</string>
+    <string name="file_select_error">跳转文件资源浏览界面异常</string>
+    <string name="please_load_excel">请先选择Excel文件</string>
+    <string name="please_scan_code">请扫描设备资产编号</string>
+
+</resources>
