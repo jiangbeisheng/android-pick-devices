@@ -1,8 +1,10 @@
 # android-pick-devices
 ___
 ### 使用步骤
+* 查看你到pc上连接到手机名称
+> adb devices
 * 通过adb将apk安装到手机
-> adb install [你的apk路径] 
+> adb -s [你到手机名称] install [你的apk路径] 
 * 通过adb将Excel文件push到手机/sdcard目录下
 > adb push 5st_all.xls /sdcard/
 * 打开app点击加载文件选择需要加载到Excel文件
