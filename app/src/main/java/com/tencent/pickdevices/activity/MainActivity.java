@@ -199,7 +199,7 @@ public class MainActivity extends AppCompatActivity {
             mNumber += String.valueOf(event.getKeyCode() - KeyEvent.KEYCODE_0);
             return true;
         } else if (KeyEvent.KEYCODE_A <= keyCode && keyCode <= KeyEvent.KEYCODE_Z && event.getAction() != KeyEvent.ACTION_UP) {
-            mNumber += String.valueOf(event.getKeyCode() - KeyEvent.KEYCODE_A + 'A');
+            mNumber += String.valueOf((char)(event.getKeyCode() - KeyEvent.KEYCODE_A + 'A'));
             return true;
         } else if (event.getKeyCode() == KeyEvent.KEYCODE_ENTER && event.getAction() != KeyEvent.ACTION_UP) {
             if (devicesArray != null){
