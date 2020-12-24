@@ -1,6 +1,7 @@
 package com.tencent.pickdevices.activity;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -8,6 +9,7 @@ import androidx.core.content.ContextCompat;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -18,6 +20,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -25,6 +28,8 @@ import android.widget.Toast;
 
 import com.tencent.pickdevices.R;
 import com.tencent.pickdevices.model.DeviceModel;
+
+import org.apache.log4j.chainsaw.Main;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -76,6 +81,12 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadData();
+    }
+
     private void initView() {
         tv_info = findViewById(R.id.tv_info);
         tv_top = findViewById(R.id.tv_top);
@@ -87,6 +98,18 @@ public class MainActivity extends AppCompatActivity {
         bt_clear = findViewById(R.id.bt_clear);
     }
 
+    public void selectFileDialog(int message) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setIcon(R.drawable.ic_launcher_foreground).setTitle("提示:")
+                .setMessage(message)
+                .setPositiveButton("选择文件", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        selectFile();
+                    }
+                }).show();
+    }
+
     private void loadData() {
         SharedPreferences datas = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         String excelUri = datas.getString("excelUri", null);
@@ -94,8 +117,10 @@ public class MainActivity extends AppCompatActivity {
             Log.i(TAG, "excelUri: " + excelUri);
             Uri uri = Uri.parse(excelUri);
             devicesArray = getXlsFromSdcard(uri, 0);
-            if (devicesArray == null) {
-                tv_excelName.setText("文件路径已改变，请重新选择文件");
+            if (devicesArray.isEmpty()) {
+                tv_excelName.setText(R.string.re_select_file);
+                tv_info.setText(R.string.re_select_file);
+                selectFileDialog(R.string.re_select_file);
             } else {
                 Log.i(TAG, "devicesArray: " + devicesArray.toString());
                 setExcelName(uri);
@@ -177,10 +202,16 @@ public class MainActivity extends AppCompatActivity {
             mNumber += String.valueOf(event.getKeyCode() - KeyEvent.KEYCODE_A + 'A');
             return true;
         } else if (event.getKeyCode() == KeyEvent.KEYCODE_ENTER && event.getAction() != KeyEvent.ACTION_UP) {
-            if (devicesArray !=null){
+            if (devicesArray != null){
+                if(devicesArray.isEmpty()){
+                    selectFileDialog(R.string.re_select_file);
+                    return true;
+                }
                 show_devcie(mNumber);
             }else {
                 tv_info.setText(R.string.please_load_excel);
+                selectFileDialog(R.string.please_load_excel);
+                return true;
             }
             mNumber = "";
         }
@@ -189,6 +220,10 @@ public class MainActivity extends AppCompatActivity {
 
     private void show_devcie(String mNumber) {
         clearScreen();
+        if (mNumber.equals("")){
+            tv_info.setText("注意：输入为空，请正确扫码");
+            return;
+        }
         DeviceModel device = compareDevice(mNumber);
         if (device == null) {
             tv_info.setText("查不到: " + mNumber);
