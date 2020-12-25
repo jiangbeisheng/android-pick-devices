@@ -205,13 +205,12 @@ public class MainActivity extends AppCompatActivity {
             if (devicesArray != null){
                 if(devicesArray.isEmpty()){
                     selectFileDialog(R.string.re_select_file);
-                    return true;
+                }else {
+                    show_devcie(mNumber);
                 }
-                show_devcie(mNumber);
             }else {
                 tv_info.setText(R.string.please_load_excel);
                 selectFileDialog(R.string.please_load_excel);
-                return true;
             }
             mNumber = "";
         }
